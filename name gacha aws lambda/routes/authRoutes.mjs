@@ -48,6 +48,19 @@ export async function signUpUser(userId, userPassword) {
         return buildResponse(500, 'Failed to retrieve data: ' + err.message);
     }
 }
+export async function optionsHandler(event) {
+    return {
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': 'http://localhost:5173',
+            'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+            'Access-Control-Allow-Headers':
+                'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Credentials': 'true',
+        },
+        body: JSON.stringify(''),
+    };
+}
 
 //sign in (post) -> return uuid, issue access & refresh token
 export async function signInUser(userId, userPassword) {
@@ -81,14 +94,27 @@ export async function signInUser(userId, userPassword) {
             return {
                 statusCode: 200,
                 body: JSON.stringify('Login successful'),
-                headers: {
-                    'Set-Cookie': `accessToken=${accessToken}; HttpOnly; Secure; Max-Age=60`,
-                    'Set-Cookie': `refreshToken=${refreshToken}; HttpOnly; Secure; Max-Age=86400`,
+                multiValueHeaders: {
+                    'Access-Control-Allow-Origin': ['http://localhost:5173'],
+                    'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
+                    'Access-Control-Allow-Credentials': ['true'],
+                    'Set-Cookie': [
+                        `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=60; SameSite=None; Secure`,
+                        `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=86400; SameSite=None; Secure`,
+                    ],
                 },
             };
         }
     } catch (err) {
-        return buildResponse(500, 'Failed to retrieve data: ' + err.message);
+        return {
+            statusCode: 501,
+            body: JSON.stringify(err.message),
+            headers: {
+                'Access-Control-Allow-Origin': 'http://localhost:5173',
+                'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+                'Access-Control-Allow-Credentials': 'true',
+            },
+        };
     }
 }
 
@@ -100,8 +126,11 @@ export async function signOutUser() {
             statusCode: 200,
             body: JSON.stringify('sign out successful'),
             headers: {
-                'Set-Cookie': `accessToken=' '; HttpOnly; Secure; Max-Age=60`,
-                'Set-Cookie': `refreshToken=' '; HttpOnly; Secure; Max-Age=86400`,
+                'Access-Control-Allow-Origin': 'http://localhost:5173', // 또는 특정 도메인
+                'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+                'Access-Control-Allow-Credentials': 'true',
+                'Set-Cookie': `accessToken=' '; HttpOnly; Path=/; Max-Age=60`,
+                'Set-Cookie': `refreshToken=' '; HttpOnly; Path=/; Max-Age=86400`,
             },
         };
     } catch (err) {
@@ -149,7 +178,10 @@ export async function refreshToken(cookies) {
                 statusCode: 200,
                 body: JSON.stringify(decoded),
                 headers: {
-                    'Set-Cookie': `accessToken=${accessToken}; HttpOnly; Secure; Max-Age=60`,
+                    'Access-Control-Allow-Origin': 'http://localhost:5173', // 또는 특정 도메인
+                    'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+                    'Access-Control-Allow-Credentials': 'true',
+                    'Set-Cookie': `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=60`,
                 },
             };
         } catch (err) {

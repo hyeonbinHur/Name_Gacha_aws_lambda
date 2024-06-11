@@ -23,33 +23,29 @@ export const pool = new Pool({
 export function buildResponse(statusCode, body) {
     return {
         statusCode: statusCode,
+
         headers: {
-            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*', // 또는 특정 도메인
+            'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
+
         body: JSON.stringify(body),
     };
 }
-export function buildResponse2(statusCode, body) {
-    return {
-        statusCode: statusCode,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: body,
-    };
-}
-
 function parseCookies(cookieHeader) {
     const cookies = {};
     if (cookieHeader) {
         cookieHeader.split(';').forEach(function (cookie) {
             var parts = cookie.match(/(.*?)=(.*)$/);
-            cookies[parts[1].trim()] = (parts[2] || '').trim();
+            if (parts) {
+                // 이 부분을 추가
+                cookies[parts[1].trim()] = (parts[2] || '').trim();
+            }
         });
     }
     return cookies;
 }
-
 const rootPath = '/namegacha';
 const projectPath = rootPath + '/project';
 const projectsPath = projectPath + '/projects';
@@ -209,10 +205,12 @@ export async function handler(event) {
                 response = await authRoutes.signOutUser();
             } else if (content === 'access token') {
                 const cookies = parseCookies(event.headers.Cookie);
-                response = await authRoutes.accessToken(cookies);
+                // response = await authRoutes.accessToken(cookies);
+                response = buildResponse(200, 'Hello world');
             } else if (content === 'refresh token') {
                 const cookies = parseCookies(event.headers.Cookie);
-                response = await authRoutes.refreshToken(cookies);
+                // response = await authRoutes.refreshToken(cookies);
+                response = buildResponse(200, cookies['refreshToken']);
             }
         } else if (event.httpMethod === 'PUT') {
             const requestBody = JSON.parse(event.body);
@@ -224,6 +222,8 @@ export async function handler(event) {
                 userOldPassword,
                 userNewPassword
             );
+        } else if (event.httpMethod === 'OPTION') {
+            response = await authRoutes.optionsHandler(event);
         }
     } else {
         response = buildResponse(404, 'Not Found HEllo');
