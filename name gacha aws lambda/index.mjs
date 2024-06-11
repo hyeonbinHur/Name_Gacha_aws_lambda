@@ -245,10 +245,12 @@ export async function handler(event) {
             if (content == 'create thread') {
                 response = await aiRoutes.creatThread();
             } else if (content == 'read messages') {
-                response = await aiRoutes.readMessages();
+                const threadId = requestBody.threadId;
+                response = await aiRoutes.readMessages(threadId);
             }
         } else if (event.httpMethod === 'POST') {
-            response = await aiRoutes.sendMessage();
+            const threadId = requestBody.threadId;
+            response = await aiRoutes.sendMessage(threadId);
         }
     } else {
         response = buildResponse(404, 'Not Found HEllo');
