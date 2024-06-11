@@ -20,6 +20,18 @@ export const pool = new Pool({
     },
 });
 
+export const buildCookieResponse = (statusCode, body) => {
+    return {
+        statusCode: statusCode,
+        body: JSON.stringify(body),
+        multiValueHeaders: {
+            'Access-Control-Allow-Origin': ['http://localhost:5173'],
+            'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
+            'Access-Control-Allow-Credentials': ['true'],
+        },
+    };
+};
+
 export function buildResponse(statusCode, body) {
     return {
         statusCode: statusCode,
@@ -39,7 +51,6 @@ function parseCookies(cookieHeader) {
         cookieHeader.split(';').forEach(function (cookie) {
             var parts = cookie.match(/(.*?)=(.*)$/);
             if (parts) {
-                // 이 부분을 추가
                 cookies[parts[1].trim()] = (parts[2] || '').trim();
             }
         });
@@ -204,13 +215,14 @@ export async function handler(event) {
             } else if (content === 'sign out') {
                 response = await authRoutes.signOutUser();
             } else if (content === 'access token') {
-                const cookies = parseCookies(event.headers.Cookie);
-                // response = await authRoutes.accessToken(cookies);
-                response = buildResponse(200, 'Hello world');
+                const cookies = parseCookies(event.headers.cookie);
+                console.log('header : ' + event.headers);
+                console.log('refresh Token : ' + cookies['refreshToken']);
+                console.log('access Token : ' + cookies['accessToken']);
+                response = await authRoutes.accessToken(cookies);
             } else if (content === 'refresh token') {
-                const cookies = parseCookies(event.headers.Cookie);
-                // response = await authRoutes.refreshToken(cookies);
-                response = buildResponse(200, cookies['refreshToken']);
+                const cookies = parseCookies(event.headers.cookie);
+                response = await authRoutes.refreshToken(cookies);
             }
         } else if (event.httpMethod === 'PUT') {
             const requestBody = JSON.parse(event.body);

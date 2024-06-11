@@ -24,6 +24,18 @@ const findUser = (userId) => {
     });
 };
 
+const buildCookieResponse = (statusCode, body) => {
+    return {
+        statusCode: statusCode,
+        body: JSON.stringify(body),
+        multiValueHeaders: {
+            'Access-Control-Allow-Origin': ['http://localhost:5173'],
+            'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
+            'Access-Control-Allow-Credentials': ['true'],
+        },
+    };
+};
+
 //sign up (post)
 export async function signUpUser(userId, userPassword) {
     try {
@@ -125,34 +137,48 @@ export async function signOutUser() {
         return {
             statusCode: 200,
             body: JSON.stringify('sign out successful'),
-            headers: {
-                'Access-Control-Allow-Origin': 'http://localhost:5173', // 또는 특정 도메인
-                'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
-                'Access-Control-Allow-Credentials': 'true',
-                'Set-Cookie': `accessToken=' '; HttpOnly; Path=/; Max-Age=60`,
-                'Set-Cookie': `refreshToken=' '; HttpOnly; Path=/; Max-Age=86400`,
+            multiValueHeaders: {
+                'Access-Control-Allow-Origin': ['http://localhost:5173'],
+                'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
+                'Access-Control-Allow-Credentials': ['true'],
+                'Set-Cookie': [
+                    `accessToken=' '; HttpOnly; Path=/; Max-Age=60; SameSite=None; Secure`,
+                    `refreshToken=' '; HttpOnly; Path=/; Max-Age=86400; SameSite=None; Secure`,
+                ],
             },
         };
     } catch (err) {
-        return buildResponse(500, 'Failed to retrieve data: ' + err.message);
+        return buildCookieResponse(
+            500,
+            'Failed to retrieve data: ' + err.message
+        );
     }
 }
 //check access token (post) // check login status
 export async function accessToken(cookies) {
     const accessToken = cookies['accessToken'];
+    console.log('access Token : ' + accessToken);
     if (!accessToken) {
-        return buildResponse(401, 'Access token missing');
+        return buildCookieResponse(401, 'Access token missing');
     } else {
         try {
             const decoded = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-            return buildResponse(200, decoded);
+            return {
+                statusCode: 200,
+                body: JSON.stringify(decoded),
+                headers: {
+                    'Access-Control-Allow-Origin': 'http://localhost:5173', // 또는 특정 도메인
+                    'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+                    'Access-Control-Allow-Credentials': 'true',
+                },
+            };
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError) {
-                return buildResponse(401, 'Access token expired');
+                return buildCookieResponse(401, 'Access token expired');
             } else if (err instanceof jwt.JsonWebTokenError) {
-                return buildResponse(401, 'Invalid access token');
+                return buildCookieResponse(401, 'Invalid access token');
             } else {
-                return buildResponse(500, 'Internal Server Error');
+                return buildCookieResponse(500, 'Internal Server Error');
             }
         }
     }
@@ -162,7 +188,7 @@ export async function accessToken(cookies) {
 export async function refreshToken(cookies) {
     const refreshToken = cookies['refreshToken'];
     if (!refreshToken) {
-        return buildResponse(401, 'Refresh token missing');
+        return buildCookieResponse(401, 'Refresh token missing');
     } else {
         try {
             const decoded = jwt.verify(
@@ -177,20 +203,22 @@ export async function refreshToken(cookies) {
             return {
                 statusCode: 200,
                 body: JSON.stringify(decoded),
-                headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:5173', // 또는 특정 도메인
-                    'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
-                    'Access-Control-Allow-Credentials': 'true',
-                    'Set-Cookie': `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=60`,
+                multiValueHeaders: {
+                    'Access-Control-Allow-Origin': ['http://localhost:5173'],
+                    'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
+                    'Access-Control-Allow-Credentials': ['true'],
+                    'Set-Cookie': [
+                        `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=60; SameSite=None; Secure`,
+                    ],
                 },
             };
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError) {
-                return buildResponse(401, 'Refresh token expired');
+                return buildCookieResponse(401, 'Refresh token expired');
             } else if (err instanceof jwt.JsonWebTokenError) {
-                return buildResponse(401, 'Invalud refresh token');
+                return buildCookieResponse(401, 'Invalud refresh token');
             } else {
-                return buildResponse(500, 'Internal Server Error');
+                return buildCookieResponse(500, 'Internal Server Error');
             }
         }
     }
