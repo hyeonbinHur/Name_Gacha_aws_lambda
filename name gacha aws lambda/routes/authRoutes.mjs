@@ -142,8 +142,8 @@ export async function signOutUser() {
                 'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
                 'Access-Control-Allow-Credentials': ['true'],
                 'Set-Cookie': [
-                    `accessToken=' '; HttpOnly; Path=/; Max-Age=60; SameSite=None; Secure`,
-                    `refreshToken=' '; HttpOnly; Path=/; Max-Age=86400; SameSite=None; Secure`,
+                    `accessToken=' '; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure`,
+                    `refreshToken=' '; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure`,
                 ],
             },
         };

@@ -6,9 +6,7 @@ import * as functionRoutes from './routes/functionRoutes.mjs';
 import * as variableRoutes from './routes/variableRoutes.mjs';
 // import * as masterRoutes from './routes/masterRoutes.mjs';
 import * as authRoutes from './routes/authRoutes.mjs';
-
 const { Pool } = pkg;
-
 export const pool = new Pool({
     host: process.env.HOST,
     port: 5432,
