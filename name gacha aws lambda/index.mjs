@@ -6,6 +6,7 @@ import * as functionRoutes from './routes/functionRoutes.mjs';
 import * as variableRoutes from './routes/variableRoutes.mjs';
 // import * as masterRoutes from './routes/masterRoutes.mjs';
 import * as authRoutes from './routes/authRoutes.mjs';
+import * as aiRoutes from './routes/aiRoutes.mjs';
 const { Pool } = pkg;
 export const pool = new Pool({
     host: process.env.HOST,
@@ -67,6 +68,8 @@ const variablesPath = variablePath + '/variables';
 const masterPath = rootPath + '/master';
 const mastersPath = masterPath + '/masters';
 const authPath = rootPath + '/auth';
+
+const aiPath = rootPath + '/ai';
 
 export async function handler(event) {
     let response;
@@ -234,6 +237,18 @@ export async function handler(event) {
             );
         } else if (event.httpMethod === 'OPTION') {
             response = await authRoutes.optionsHandler(event);
+        }
+    } else if (event.path === aiPath) {
+        if (event.httpMethod === 'GET') {
+            const requestBody = JSON.parse(event.body);
+            const content = requestBody.content;
+            if (content == 'create thread') {
+                response = await aiRoutes.creatThread();
+            } else if (content == 'read messages') {
+                response = await aiRoutes.readMessages();
+            }
+        } else if (event.httpMethod === 'POST') {
+            response = await aiRoutes.sendMessage();
         }
     } else {
         response = buildResponse(404, 'Not Found HEllo');
