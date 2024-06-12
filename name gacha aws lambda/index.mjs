@@ -6,8 +6,9 @@ import * as functionRoutes from './routes/functionRoutes.mjs';
 import * as variableRoutes from './routes/variableRoutes.mjs';
 // import * as masterRoutes from './routes/masterRoutes.mjs';
 import * as authRoutes from './routes/authRoutes.mjs';
-import * as aiRoutes from './routes/aiRoutes.mjs';
 const { Pool } = pkg;
+import axios from 'axios';
+
 export const pool = new Pool({
     host: process.env.HOST,
     port: 5432,
@@ -56,6 +57,29 @@ function parseCookies(cookieHeader) {
     }
     return cookies;
 }
+
+async function testInternetConnectivity() {
+    try {
+        const response = await axios.get('https://api.ipify.org?format=json'); // 외부 IP를 반환하는 간단한 API
+        console.log('External IP:', response.data.ip); // 로그에 외부 IP 주소를 출력
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'Successfully connected to the internet!',
+                ip: response.data.ip,
+            }),
+        };
+    } catch (error) {
+        console.error('Error connecting to the internet:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: 'Failed to connect to the internet',
+                error: error.message,
+            }),
+        };
+    }
+}
 const rootPath = '/namegacha';
 const projectPath = rootPath + '/project';
 const projectsPath = projectPath + '/projects';
@@ -68,8 +92,6 @@ const variablesPath = variablePath + '/variables';
 const masterPath = rootPath + '/master';
 const mastersPath = masterPath + '/masters';
 const authPath = rootPath + '/auth';
-
-const aiPath = rootPath + '/ai';
 
 export async function handler(event) {
     let response;
@@ -238,22 +260,8 @@ export async function handler(event) {
         } else if (event.httpMethod === 'OPTION') {
             response = await authRoutes.optionsHandler(event);
         }
-    } else if (event.path === aiPath) {
-        if (event.httpMethod === 'GET') {
-            const requestBody = JSON.parse(event.body);
-            const content = requestBody.content;
-            if (content == 'create thread') {
-                response = await aiRoutes.creatThread();
-            } else if (content == 'read messages') {
-                const threadId = requestBody.threadId;
-                response = await aiRoutes.readMessages(threadId);
-            }
-        } else if (event.httpMethod === 'POST') {
-            const threadId = requestBody.threadId;
-            response = await aiRoutes.sendMessage(threadId);
-        }
     } else {
-        response = buildResponse(404, 'Not Found HEllo');
+        response = buildResponse(404, 'Not Found');
     }
     return response;
 }
