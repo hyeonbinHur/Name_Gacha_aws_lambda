@@ -64,6 +64,54 @@ export async function getProject(projectId) {
     }
 }
 
+function formattingProject(rows) {
+    const projects = {};
+    rows.forEach((row) => {
+        if (!projects[row.projectId]) {
+            projects[row.projectId] = {
+                projectId: row.projectId,
+                projectName: row.projectName,
+                pages: [],
+            };
+        }
+        let project = projects[row.projectId];
+        let page = project.pages.find((p) => p.pageId === row.pageId);
+        if (!page && row.pageId) {
+            page = {
+                pageId: row.pageId,
+                pageName: row.pageName,
+                variables: [],
+                functions: [],
+            };
+            project.pages.push(page);
+        }
+
+        if (page) {
+            if (
+                row.variableId &&
+                !page.variables.find((v) => v.variableId === row.variableId)
+            ) {
+                page.variables.push({
+                    variableId: row.variableId,
+                    variableName: row.variableName,
+                });
+            }
+
+            if (
+                row.functionId &&
+                !page.functions.find((f) => f.functionId === row.functionId)
+            ) {
+                page.functions.push({
+                    functionId: row.functionId,
+                    functionName: row.functionName,
+                });
+            }
+        }
+    });
+
+    return projects;
+}
+
 export async function getProjects() {
     try {
         const query = `
@@ -83,52 +131,38 @@ export async function getProjects() {
                     ORDER BY p."projectId", pa."pageId", v."variableId", f."functionId"
                     `;
         const { rows } = await pool.query(query);
-        const projects = {};
-        rows.forEach((row) => {
-            if (!projects[row.projectId]) {
-                projects[row.projectId] = {
-                    projectId: row.projectId,
-                    projectName: row.projectName,
-                    pages: [],
-                };
-            }
+        const projects = formattingProject(rows);
 
-            let project = projects[row.projectId];
-            let page = project.pages.find((p) => p.pageId === row.pageId);
+        return buildResponse(200, Object.values(projects));
+    } catch (err) {
+        return buildResponse(500, 'Failed to retrieve data: ' + err.message);
+    }
+}
 
-            if (!page && row.pageId) {
-                page = {
-                    pageId: row.pageId,
-                    pageName: row.pageName,
-                    variables: [],
-                    functions: [],
-                };
-                project.pages.push(page);
-            }
+export async function getCertainProjects(uuid) {
+    try {
+        const query = `
+            SELECT 
+                p."projectId", p."projectName", 
+                pa."pageId", pa."pageName", 
+                v."variableId", v."variableName", 
+                f."functionId", f."functionName"
+            FROM 
+                projects p
+            LEFT JOIN 
+                pages pa ON p."projectId" = pa."projectId_frk"
+            LEFT JOIN 
+                variables v ON pa."pageId" = v."pageId_frk"
+            LEFT JOIN 
+                functions f ON pa."pageId" = f."pageId_frk"
+            WHERE 
+                p."userId_frk" = $1 
+            ORDER BY 
+                p."projectId", pa."pageId", v."variableId", f."functionId"
+        `;
 
-            if (page) {
-                if (
-                    row.variableId &&
-                    !page.variables.find((v) => v.variableId === row.variableId)
-                ) {
-                    page.variables.push({
-                        variableId: row.variableId,
-                        variableName: row.variableName,
-                    });
-                }
-
-                if (
-                    row.functionId &&
-                    !page.functions.find((f) => f.functionId === row.functionId)
-                ) {
-                    page.functions.push({
-                        functionId: row.functionId,
-                        functionName: row.functionName,
-                    });
-                }
-            }
-        });
-
+        const { rows } = await pool.query(query, [uuid]);
+        const projects = formattingProject(rows);
         return buildResponse(200, Object.values(projects));
     } catch (err) {
         return buildResponse(500, 'Failed to retrieve data: ' + err.message);

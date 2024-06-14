@@ -103,7 +103,14 @@ export async function handler(event) {
     } else if (event.path === projectsPath) {
         if (event.httpMethod === 'GET') {
             // get all projects
-            response = await projectRoutes.getProjects();
+
+            const content = event.queryStringParameters.content;
+            if (content === 'all') {
+                response = await projectRoutes.getProjects();
+            } else if (content === 'certain') {
+                const uuid = event.queryStringParameters.uuid;
+                response = await projectRoutes.getCertainProjects(uuid);
+            }
         }
     } else if (event.path === pagePath) {
         if (event.httpMethod === 'GET') {
