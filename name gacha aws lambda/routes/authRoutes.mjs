@@ -105,7 +105,10 @@ export async function signInUser(userId, userPassword) {
 
             return {
                 statusCode: 200,
-                body: JSON.stringify('Login successful'),
+                body: JSON.stringify({
+                    content: 'Login successful',
+                    uuid: user.uuid,
+                }),
                 multiValueHeaders: {
                     'Access-Control-Allow-Origin': ['http://localhost:5173'],
                     'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
