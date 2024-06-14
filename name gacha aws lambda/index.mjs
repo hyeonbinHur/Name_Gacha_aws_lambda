@@ -235,6 +235,9 @@ export async function handler(event) {
                 userOldPassword,
                 userNewPassword
             );
+        } else if (event.httpMethod === 'GET') {
+            const uuid = event.queryStringParameters.uuid;
+            response = await authRoutes.getUser(uuid);
         } else if (event.httpMethod === 'OPTION') {
             response = await authRoutes.optionsHandler(event);
         }

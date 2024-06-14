@@ -258,4 +258,13 @@ export async function updateUser(userId, userOldPassword, userNewPassword) {
     }
 }
 
+export async function getUser(uuid) {
+    try {
+        const query = 'SELECT * FROM public.user WHERE "uuid" = $1';
+        const { rows } = await pool.query(query, [uuid]);
+        return buildResponse(200, rows);
+    } catch (err) {
+        return buildResponse(500, 'Failed to retrieve data: ' + err.message);
+    }
+}
 //update user (password) (put) // update user pasword only
