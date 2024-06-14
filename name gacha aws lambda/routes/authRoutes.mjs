@@ -262,7 +262,7 @@ export async function getUser(uuid) {
     try {
         const query = 'SELECT * FROM public.user WHERE "uuid" = $1';
         const { rows } = await pool.query(query, [uuid]);
-        return buildResponse(200, rows);
+        return buildResponse(200, rows[0]);
     } catch (err) {
         return buildResponse(500, 'Failed to retrieve data: ' + err.message);
     }
