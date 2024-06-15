@@ -82,8 +82,10 @@ export async function handler(event) {
         } else if (event.httpMethod === 'POST') {
             // create a new project
             const requestBody = JSON.parse(event.body);
+
             response = await projectRoutes.createProject(
-                requestBody.projectName
+                requestBody.projectName,
+                requestBody.uuid
             );
         } else if (event.httpMethod === 'PUT') {
             // update an existing project

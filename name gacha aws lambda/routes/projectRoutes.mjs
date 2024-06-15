@@ -192,11 +192,11 @@ export async function deleteProject(projectId) {
     }
 }
 
-export async function createProject(projectName) {
+export async function createProject(projectName, uuid) {
     try {
         const query =
-            'INSERT INTO public.projects ("projectName") VALUES ($1) RETURNING *;';
-        const result = await pool.query(query, [projectName]);
+            'INSERT INTO public.projects ("projectName", "uuid_frk") VALUES ($1, $2) RETURNING *;';
+        const result = await pool.query(query, [projectName, uuid]);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
         return buildResponse(500, 'Failed to create project: ' + err.message);
