@@ -43,6 +43,17 @@ export async function deleteVariable(variableId) {
     }
 }
 
+export async function deleteVariablesInPage(pageId) {
+    try {
+        const query =
+            'DELETE FROM public.variables WHERE "pageId_frk" = $1 RETURNING *;';
+        const result = await pool.query(query, [pageId]);
+        return buildResponse(200, result.rows[0]);
+    } catch (err) {
+        return buildResponse(500, 'Failed to delete function: ' + err.message);
+    }
+}
+
 export async function createVariable(variableName, pageId) {
     try {
         const query =

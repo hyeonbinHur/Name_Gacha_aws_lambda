@@ -195,7 +195,7 @@ export async function deleteProject(projectId) {
 export async function createProject(projectName, uuid) {
     try {
         const query =
-            'INSERT INTO public.projects ("projectName", "uuid_frk") VALUES ($1, $2) RETURNING *;';
+            'INSERT INTO public.projects ("projectName", "userId_frk") VALUES ($1, $2) RETURNING *;';
         const result = await pool.query(query, [projectName, uuid]);
         return buildResponse(200, result.rows[0]);
     } catch (err) {

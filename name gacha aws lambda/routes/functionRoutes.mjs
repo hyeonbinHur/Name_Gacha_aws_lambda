@@ -43,6 +43,17 @@ export async function deleteFunction(functionId) {
     }
 }
 
+export async function deleteFunctionsInPage(pageId) {
+    try {
+        const query =
+            'DELETE FROM public.functions WHERE "pageId_frk" = $1 RETURNING *;';
+        const result = await pool.query(query, [pageId]);
+        return buildResponse(200, result.rows[0]);
+    } catch (err) {
+        return buildResponse(500, 'Failed to delete function: ' + err.message);
+    }
+}
+
 export async function createFunction(functionName, pageId) {
     try {
         const query =

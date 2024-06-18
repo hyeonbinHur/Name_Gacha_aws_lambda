@@ -164,8 +164,14 @@ export async function handler(event) {
             response = await variableRoutes.updateVariable(varId, variableName);
         } else if (event.httpMethod === 'DELETE') {
             //delete variable
-            const varId = event.queryStringParameters.variableId;
-            response = await variableRoutes.deleteVariable(varId);
+            const content = event.queryStringParameters.content;
+            if (content === 'inpage') {
+                const pageId = event.queryStringParameters.pageId;
+                response = await variableRoutes.deleteVariablesInPage(pageId);
+            } else if (content === 'certain') {
+                const varId = event.queryStringParameters.variableId;
+                response = await variableRoutes.deleteVariable(varId);
+            }
         }
     } else if (event.path === variablesPath) {
         if (event.httpMethod === 'GET') {
@@ -194,8 +200,14 @@ export async function handler(event) {
                 functionName
             );
         } else if (event.httpMethod === 'DELETE') {
-            const functionId = event.queryStringParameters.functionId;
-            response = await functionRoutes.deleteFunction(functionId);
+            const content = event.queryStringParameters.content;
+            if (content === 'inpage') {
+                const pageId = event.queryStringParameters.pageId;
+                response = await functionRoutes.deleteFunctionsInPage(pageId);
+            } else if (content === 'certain') {
+                const functionId = event.queryStringParameters.functionId;
+                response = await functionRoutes.deleteFunction(functionId);
+            }
         }
     } else if (event.path === functionsPath) {
         if (event.httpMethod === 'GET') {

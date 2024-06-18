@@ -63,6 +63,14 @@ export async function getPages() {
     }
 }
 
+// export async function getCertainPages(projectId) {
+//     try {
+//         const query 'SELECT * FROM public.pages'
+//     } catch (err) {
+//         return buildResponse(500, 'Failed to retrieve data: ' + err.message);
+//     }
+// }
+
 export async function updatePage(pageId, pageName) {
     try {
         const query =
