@@ -117,9 +117,8 @@ export async function handler(event) {
     } else if (event.path === pagePath) {
         if (event.httpMethod === 'GET') {
             // get one page info
-            response = await pageRoutes.getPage(
-                event.queryStringParameters.pageId
-            );
+            const pageId = event.queryStringParameters.pageId;
+            response = await pageRoutes.getPage(pageId);
         } else if (event.httpMethod === 'POST') {
             // create new page
             const requestBody = JSON.parse(event.body);

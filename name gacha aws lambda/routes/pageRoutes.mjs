@@ -4,9 +4,9 @@ export async function getPage(pageId) {
     try {
         const query = `
         SELECT 
-        pa."pageId", pa."pageName", 
-        v."variableId", v."variableName", 
-        f."functionId", f."functionName"
+        pa."pageId", pa."pageName", pa."pageExp",
+        v."variableId", v."variableName", v."variableExp",
+        f."functionId", f."functionName", f."functionExp"
         FROM 
         pages pa 
         LEFT JOIN 
