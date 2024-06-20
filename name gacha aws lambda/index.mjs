@@ -124,13 +124,20 @@ export async function handler(event) {
             const requestBody = JSON.parse(event.body);
             const pageName = requestBody.pageName;
             const projectId = requestBody.projectId;
-            response = await pageRoutes.createPage(pageName, projectId);
+            const pageExp = requestBody.pageExp;
+
+            response = await pageRoutes.createPage(
+                pageName,
+                projectId,
+                pageExp
+            );
         } else if (event.httpMethod === 'PUT') {
             // update page info
             const requestBody = JSON.parse(event.body);
             const pageName = requestBody.pageName;
+            const pageExp = requestBody.pageExp;
             const pageId = event.queryStringParameters.pageId;
-            response = await pageRoutes.updatePage(pageId, pageName);
+            response = await pageRoutes.updatePage(pageId, pageName, pageExp);
         } else if (event.httpMethod === 'DELETE') {
             // delete page
             const pageId = event.queryStringParameters.pageId;
@@ -150,17 +157,24 @@ export async function handler(event) {
             // create new variable
             const requestBody = JSON.parse(event.body);
             const variableName = requestBody.variableName;
+            const variableExp = requestBody.variableExp;
             const pageId = requestBody.pageId;
             response = await variableRoutes.createVariable(
                 variableName,
+                variableExp,
                 pageId
             );
         } else if (event.httpMethod === 'PUT') {
             //update variable info
             const requestBody = JSON.parse(event.body);
             const variableName = requestBody.variableName;
+            const variableExp = requestBody.variableExp;
             const varId = event.queryStringParameters.variableId;
-            response = await variableRoutes.updateVariable(varId, variableName);
+            response = await variableRoutes.updateVariable(
+                varId,
+                variableExp,
+                variableName
+            );
         } else if (event.httpMethod === 'DELETE') {
             //delete variable
             const content = event.queryStringParameters.content;
@@ -185,17 +199,21 @@ export async function handler(event) {
         } else if (event.httpMethod === 'POST') {
             const requestBody = JSON.parse(event.body);
             const functionName = requestBody.functionName;
+            const functionExp = requestBody.functionExp;
             const pageId = requestBody.pageId;
             response = await functionRoutes.createFunction(
                 functionName,
+                functionExp,
                 pageId
             );
         } else if (event.httpMethod === 'PUT') {
             const requestBody = JSON.parse(event.body);
             const functionName = requestBody.functionName;
+            const functionExp = requestBody.functionExp;
             const functionId = event.queryStringParameters.functionId;
             response = await functionRoutes.updateFunction(
                 functionId,
+                functionExp,
                 functionName
             );
         } else if (event.httpMethod === 'DELETE') {

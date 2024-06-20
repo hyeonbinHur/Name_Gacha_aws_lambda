@@ -71,11 +71,11 @@ export async function getPages() {
 //     }
 // }
 
-export async function updatePage(pageId, pageName) {
+export async function updatePage(pageId, pageName, pageExp) {
     try {
         const query =
-            'UPDATE public.pages SET "pageName" = $1 WHERE "pageId" = $2 RETURNING *';
-        const values = [pageName, pageId];
+            'UPDATE public.pages SET "pageName" = $1,"pageExp" = $2 WHERE "pageId" = $3 RETURNING *';
+        const values = [pageName, pageExp, pageId];
         const result = await pool.query(query, values);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
@@ -94,11 +94,11 @@ export async function deletePage(pageId) {
     }
 }
 
-export async function createPage(pageName, projectId) {
+export async function createPage(pageName, projectId, pageExp) {
     try {
         const query =
-            'INSERT INTO public.pages ("pageName", "projectId_frk") VALUES ($1,$2) RETURNING *;';
-        const result = await pool.query(query, [pageName, projectId]);
+            'INSERT INTO public.pages ("pageName", "projectId_frk","pageExp") VALUES ($1,$2,$3) RETURNING *;';
+        const result = await pool.query(query, [pageName, projectId, pageExp]);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
         return buildResponse(500, 'Failed to create page: ' + err.message);

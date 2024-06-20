@@ -20,11 +20,11 @@ export async function getVariables() {
     }
 }
 
-export async function updateVariable(variableId, variableName) {
+export async function updateVariable(variableId, variableExp, variableName) {
     try {
         const query =
-            'UPDATE public.variables SET "variableName" = $1 WHERE "variableId" = $2 RETURNING *';
-        const values = [variableName, variableId];
+            'UPDATE public.variables SET "variableName" = $1, "variableExp" = $2, WHERE "variableId" = $3 RETURNING *';
+        const values = [variableName, variableExp, variableId];
         const result = await pool.query(query, values);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
@@ -54,11 +54,15 @@ export async function deleteVariablesInPage(pageId) {
     }
 }
 
-export async function createVariable(variableName, pageId) {
+export async function createVariable(variableName, variableExp, pageId) {
     try {
         const query =
-            'INSERT INTO public.variables ("variableName","pageId_frk") VALUES ($1,$2) RETURNING *;';
-        const result = await pool.query(query, [variableName, pageId]);
+            'INSERT INTO public.variables ("variableName","variableExp","pageId_frk") VALUES ($1,$2,$3) RETURNING *;';
+        const result = await pool.query(query, [
+            variableName,
+            variableExp,
+            pageId,
+        ]);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
         return buildResponse(500, 'Failed to create variable: ' + err.message);

@@ -20,11 +20,11 @@ export async function getFunctions() {
     }
 }
 
-export async function updateFunction(functionId, functionName) {
+export async function updateFunction(functionId, functionExp, functionName) {
     try {
         const query =
-            'UPDATE public.functions SET "functionName" = $1 WHERE "functionId" = $2 RETURNING *';
-        const values = [functionName, functionId];
+            'UPDATE public.functions SET "functionName" = $1, "functionExp" = $2 WHERE "functionId" = $3 RETURNING *';
+        const values = [functionName, functionExp, functionId];
         const result = await pool.query(query, values);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
@@ -54,11 +54,15 @@ export async function deleteFunctionsInPage(pageId) {
     }
 }
 
-export async function createFunction(functionName, pageId) {
+export async function createFunction(functionName, functionExp, pageId) {
     try {
         const query =
-            'INSERT INTO public.functions ("functionName","pageId_frk") VALUES ($1,$2) RETURNING *;';
-        const result = await pool.query(query, [functionName, pageId]);
+            'INSERT INTO public.functions ("functionName","functionExp","pageId_frk") VALUES ($1,$2,$3) RETURNING *;';
+        const result = await pool.query(query, [
+            functionName,
+            functionExp,
+            pageId,
+        ]);
         return buildResponse(200, result.rows[0]);
     } catch (err) {
         return buildResponse(500, 'Failed to create function: ' + err.message);
