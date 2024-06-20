@@ -23,7 +23,7 @@ export async function getVariables() {
 export async function updateVariable(variableId, variableExp, variableName) {
     try {
         const query =
-            'UPDATE public.variables SET "variableName" = $1, "variableExp" = $2, WHERE "variableId" = $3 RETURNING *';
+            'UPDATE public.variables SET "variableName" = $1, "variableExp" = $2 WHERE "variableId" = $3 RETURNING *';
         const values = [variableName, variableExp, variableId];
         const result = await pool.query(query, values);
         return buildResponse(200, result.rows[0]);
