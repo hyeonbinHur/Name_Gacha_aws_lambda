@@ -80,7 +80,7 @@ export async function signInUser(userId, userPassword) {
         const query = 'SELECT * FROM public.user WHERE "userId" = $1';
         const { rows } = await pool.query(query, [userId]);
         if (rows.length === 0) {
-            return buildResponse(404, 'User not found');
+            return buildCookieResponse(404, 'Id not found');
         }
         const user = rows[0];
         const salt = user.salt;
@@ -90,7 +90,7 @@ export async function signInUser(userId, userPassword) {
             .digest('hex');
 
         if (hashPassword !== user.userPassword) {
-            return buildResponse(401, 'Invalid password');
+            return buildCookieResponse(401, 'Password not match');
         } else {
             const accessToken = jwt.sign(
                 { uuid: user.uuid },
