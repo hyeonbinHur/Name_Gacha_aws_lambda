@@ -54,7 +54,7 @@ export async function signUpUser(userId, userPassword) {
             const result = await pool.query(query, values);
             return buildResponse(200, result.rows[0]);
         } else {
-            return buildResponse(500, 'User already existing');
+            return buildResponse(409, 'User already existing');
         }
     } catch (err) {
         return buildResponse(500, 'Failed to retrieve data: ' + err.message);
@@ -157,6 +157,7 @@ export async function signOutUser() {
         );
     }
 }
+
 //check access token (post) // check login status
 export async function accessToken(cookies) {
     const accessToken = cookies['accessToken'];
@@ -179,7 +180,7 @@ export async function accessToken(cookies) {
             if (err instanceof jwt.TokenExpiredError) {
                 return buildCookieResponse(401, 'Access token expired');
             } else if (err instanceof jwt.JsonWebTokenError) {
-                return buildCookieResponse(401, 'Invalid access token');
+                return buildCookieResponse(403, 'Invalid access token');
             } else {
                 return buildCookieResponse(500, 'Internal Server Error');
             }
@@ -219,7 +220,7 @@ export async function refreshToken(cookies) {
             if (err instanceof jwt.TokenExpiredError) {
                 return buildCookieResponse(401, 'Refresh token expired');
             } else if (err instanceof jwt.JsonWebTokenError) {
-                return buildCookieResponse(401, 'Invalud refresh token');
+                return buildCookieResponse(403, 'Invalid refresh token');
             } else {
                 return buildCookieResponse(500, 'Internal Server Error');
             }
