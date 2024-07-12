@@ -29,7 +29,7 @@ const buildCookieResponse = (statusCode, body) => {
         statusCode: statusCode,
         body: JSON.stringify(body),
         multiValueHeaders: {
-            'Access-Control-Allow-Origin': ['http://localhost:5173'],
+            'Access-Control-Allow-Origin': ['https://hyeonbinhur.github.io'],
             'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
             'Access-Control-Allow-Credentials': ['true'],
         },
@@ -64,7 +64,7 @@ export async function optionsHandler(event) {
     return {
         statusCode: 200,
         headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:5173',
+            'Access-Control-Allow-Origin': 'https://hyeonbinhur.github.io',
             'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
             'Access-Control-Allow-Headers':
                 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
@@ -110,7 +110,9 @@ export async function signInUser(userId, userPassword) {
                     uuid: user.uuid,
                 }),
                 multiValueHeaders: {
-                    'Access-Control-Allow-Origin': ['http://localhost:5173'],
+                    'Access-Control-Allow-Origin': [
+                        'https://hyeonbinhur.github.io',
+                    ],
                     'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
                     'Access-Control-Allow-Credentials': ['true'],
                     'Set-Cookie': [
@@ -125,7 +127,7 @@ export async function signInUser(userId, userPassword) {
             statusCode: 501,
             body: JSON.stringify(err.message),
             headers: {
-                'Access-Control-Allow-Origin': 'http://localhost:5173',
+                'Access-Control-Allow-Origin': 'https://hyeonbinhur.github.io',
                 'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
                 'Access-Control-Allow-Credentials': 'true',
             },
@@ -141,7 +143,9 @@ export async function signOutUser() {
             statusCode: 200,
             body: JSON.stringify('sign out successful'),
             multiValueHeaders: {
-                'Access-Control-Allow-Origin': ['http://localhost:5173'],
+                'Access-Control-Allow-Origin': [
+                    'https://hyeonbinhur.github.io',
+                ],
                 'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
                 'Access-Control-Allow-Credentials': ['true'],
                 'Set-Cookie': [
@@ -171,7 +175,8 @@ export async function accessToken(cookies) {
                 statusCode: 200,
                 body: JSON.stringify(decoded),
                 headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:5173', // 또는 특정 도메인
+                    'Access-Control-Allow-Origin':
+                        'https://hyeonbinhur.github.io', // 또는 특정 도메인
                     'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
                     'Access-Control-Allow-Credentials': 'true',
                 },
@@ -208,7 +213,9 @@ export async function refreshToken(cookies) {
                 statusCode: 200,
                 body: JSON.stringify(decoded),
                 multiValueHeaders: {
-                    'Access-Control-Allow-Origin': ['http://localhost:5173'],
+                    'Access-Control-Allow-Origin': [
+                        'https://hyeonbinhur.github.io',
+                    ],
                     'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
                     'Access-Control-Allow-Credentials': ['true'],
                     'Set-Cookie': [

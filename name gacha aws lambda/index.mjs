@@ -25,7 +25,7 @@ export const buildCookieResponse = (statusCode, body) => {
         statusCode: statusCode,
         body: JSON.stringify(body),
         multiValueHeaders: {
-            'Access-Control-Allow-Origin': ['http://localhost:5173'],
+            'Access-Control-Allow-Origin': ['https://hyeonbinhur.github.io'],
             'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
             'Access-Control-Allow-Credentials': ['true'],
         },
@@ -37,7 +37,7 @@ export function buildResponse(statusCode, body) {
         statusCode: statusCode,
 
         headers: {
-            'Access-Control-Allow-Origin': '*', // 또는 특정 도메인
+            'Access-Control-Allow-Origin': 'https://hyeonbinhur.github.io', // 또는 특정 도메인
             'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
