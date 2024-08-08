@@ -8,7 +8,6 @@ import * as variableRoutes from './routes/variableRoutes.mjs';
 import * as authRoutes from './routes/authRoutes.mjs';
 const { Pool } = pkg;
 import axios from 'axios';
-
 export const pool = new Pool({
     host: process.env.HOST,
     port: 5432,
@@ -25,7 +24,7 @@ export const buildCookieResponse = (statusCode, body) => {
         statusCode: statusCode,
         body: JSON.stringify(body),
         multiValueHeaders: {
-            'Access-Control-Allow-Origin': ['https://hyeonbinhur.github.io'],
+            'Access-Control-Allow-Origin': ['http://localhost:5173'],
             'Access-Control-Allow-Methods': ['POST, GET, PUT, DELETE'],
             'Access-Control-Allow-Credentials': ['true'],
         },
@@ -35,9 +34,8 @@ export const buildCookieResponse = (statusCode, body) => {
 export function buildResponse(statusCode, body) {
     return {
         statusCode: statusCode,
-
         headers: {
-            'Access-Control-Allow-Origin': 'https://hyeonbinhur.github.io', // 또는 특정 도메인
+            'Access-Control-Allow-Origin': '*', // 또는 특정 도메인
             'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
@@ -57,7 +55,6 @@ function parseCookies(cookieHeader) {
     }
     return cookies;
 }
-
 const rootPath = '/namegacha';
 const projectPath = rootPath + '/project';
 const projectsPath = projectPath + '/projects';
@@ -70,7 +67,6 @@ const variablesPath = variablePath + '/variables';
 const masterPath = rootPath + '/master';
 const mastersPath = masterPath + '/masters';
 const authPath = rootPath + '/auth';
-
 export async function handler(event) {
     let response;
     if (event.path === projectPath) {
@@ -255,9 +251,6 @@ export async function handler(event) {
                 response = await authRoutes.signOutUser();
             } else if (content === 'access token') {
                 const cookies = parseCookies(event.headers.cookie);
-                console.log('header : ' + event.headers);
-                console.log('refresh Token : ' + cookies['refreshToken']);
-                console.log('access Token : ' + cookies['accessToken']);
                 response = await authRoutes.accessToken(cookies);
             } else if (content === 'refresh token') {
                 const cookies = parseCookies(event.headers.cookie);

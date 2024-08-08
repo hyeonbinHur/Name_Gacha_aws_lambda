@@ -1,13 +1,14 @@
+Project Overview
+Techonologies Used
+Lambda Function Layers
+ERD
+![alt text](image.png)
+REST APIs
+
 Layer
 
 > Open ai, axios, pg
-
-blog
-
-design :
-backend
-
-> RDS + Lambda + API gateway : https://uncle-hyeonb.tistory.com/28
+> RDS + Lambda + API gateway
 
 page
 

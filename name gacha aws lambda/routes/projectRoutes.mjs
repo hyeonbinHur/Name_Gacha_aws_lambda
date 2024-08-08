@@ -1,68 +1,6 @@
 import { pool, buildResponse } from '../index.mjs';
 
-export async function getProject(projectId) {
-    try {
-        // const query = 'SELECT * FROM public.projects WHERE "projectId" = $1';
-
-        const query = `
-                    SELECT 
-                    p."projectId", p."projectName", 
-                    pa."pageId", pa."pageName", 
-                    v."variableId", v."variableName", 
-                    f."functionId", f."functionName"
-                    FROM 
-                    projects p
-                    LEFT JOIN 
-                    pages pa ON p."projectId" = pa."projectId_frk"
-                    LEFT JOIN 
-                    variables v ON pa."pageId" = v."pageId_frk"
-                    LEFT JOIN 
-                    functions f ON pa."pageId" = f."pageId_frk"
-                    WHERE 
-                    p."projectId" = $1;
-                    `;
-        const { rows } = await pool.query(query, [projectId]);
-        const data = {
-            projectId: rows[0].projectId,
-            projectName: rows[0].projectName,
-            pages: [],
-        };
-        rows.forEach((row) => {
-            let page = data.pages.find((p) => p.pageId === row.pageId);
-            if (!page) {
-                page = {
-                    pageId: row.pageId,
-                    pageName: row.pageName,
-                    variables: [],
-                    functions: [],
-                };
-                data.pages.push(page);
-            }
-            if (
-                row.variableId &&
-                !page.variables.find((v) => v.variableId === row.variableId)
-            ) {
-                page.variables.push({
-                    variableId: row.variableId,
-                    variableName: row.variableName,
-                });
-            }
-            if (
-                row.functionId &&
-                !page.functions.find((f) => f.functionId === row.functionId)
-            ) {
-                page.functions.push({
-                    functionId: row.functionId,
-                    functionName: row.functionName,
-                });
-            }
-        });
-
-        return buildResponse(200, data);
-    } catch (err) {
-        return buildResponse(500, 'Failed to retrieve data: ' + err.message);
-    }
-}
+1;
 
 function formattingProject(rows) {
     const projects = {};
@@ -96,7 +34,6 @@ function formattingProject(rows) {
                     variableName: row.variableName,
                 });
             }
-
             if (
                 row.functionId &&
                 !page.functions.find((f) => f.functionId === row.functionId)
@@ -108,7 +45,6 @@ function formattingProject(rows) {
             }
         }
     });
-
     return projects;
 }
 
@@ -132,7 +68,6 @@ export async function getProjects() {
                     `;
         const { rows } = await pool.query(query);
         const projects = formattingProject(rows);
-
         return buildResponse(200, Object.values(projects));
     } catch (err) {
         return buildResponse(500, 'Failed to retrieve data: ' + err.message);

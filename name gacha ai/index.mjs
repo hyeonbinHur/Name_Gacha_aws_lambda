@@ -3,7 +3,6 @@ import axios from 'axios';
 export function buildResponse(statusCode, body) {
     return {
         statusCode: statusCode,
-
         headers: {
             'Access-Control-Allow-Origin': '*', // 또는 특정 도메인
             'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
@@ -18,8 +17,8 @@ const aiPath = rootPath + '/ai';
 
 async function testInternetConnectivity() {
     try {
-        const response = await axios.get('https://api.ipify.org?format=json'); // 외부 IP를 반환하는 간단한 API
-        console.log('External IP:', response.data.ip); // 로그에 외부 IP 주소를 출력
+        const response = await axios.get('https://api.ipify.org?format=json');
+        console.log('External IP:', response.data.ip);
         return {
             statusCode: 200,
             body: JSON.stringify({
