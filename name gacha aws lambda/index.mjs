@@ -1,13 +1,15 @@
 // index.mjs
-import pkg from 'pg';
+
 import * as projectRoutes from './routes/projectRoutes.mjs';
 import * as pageRoutes from './routes/pageRoutes.mjs';
 import * as functionRoutes from './routes/functionRoutes.mjs';
 import * as variableRoutes from './routes/variableRoutes.mjs';
 // import * as masterRoutes from './routes/masterRoutes.mjs';
 import * as authRoutes from './routes/authRoutes.mjs';
+
+import pkg from 'pg';
 const { Pool } = pkg;
-import axios from 'axios';
+
 export const pool = new Pool({
     host: process.env.HOST,
     port: 5432,
@@ -67,6 +69,7 @@ const variablesPath = variablePath + '/variables';
 const masterPath = rootPath + '/master';
 const mastersPath = masterPath + '/masters';
 const authPath = rootPath + '/auth';
+
 export async function handler(event) {
     let response;
     if (event.path === projectPath) {
@@ -121,7 +124,6 @@ export async function handler(event) {
             const pageName = requestBody.pageName;
             const projectId = requestBody.projectId;
             const pageExp = requestBody.pageExp;
-
             response = await pageRoutes.createPage(
                 pageName,
                 projectId,
