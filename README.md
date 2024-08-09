@@ -1,5 +1,20 @@
 # NameGacha lambda function
 
+<div align="center">
+<img src="https://img.shields.io/badge/AWS Lambda-FF9900?style=for-the-badge&logo=awslambda&logoColor=white">
+<img src="https://img.shields.io/badge/AWS RDS-527FFF?style=for-the-badge&logo=awsrds&logoColor=white">
+<img src="https://img.shields.io/badge/AWS API Gateway-FF4F8B?style=for-the-badge&logo=amazonapigateway&logoColor=white">
+<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white">
+<img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white">
+<img src="https://img.shields.io/badge/Node.js-5FA04E?style=for-the-badge&logoColor=white">
+
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/4c42d3da-e9c5-463e-aa6a-fb6439f30767">
+  
+</div>
+
 ## Project Overview
 
 This project is an AI-powered chatting application built with AWS Lambda functions written in Node.js. The main feature of the project is to provide identifier names and explanations for developers. When a developer gives a simple explanation to the AI, it returns 9 sample names with explanations. The developer can choose one of these names and save the name and explanation to their database. The database consists of five tables: project, page, variable, function, and user. A user is associated with projects, each project contains pages, and each page contains variables and functions. The application is implemented using REST APIs with AWS Lambda functions, API Gateway, RDS, and OpenAI's Assistant API.
